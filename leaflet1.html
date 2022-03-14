@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+    <!-- Url: https://leafletjs.com/SlavaUkraini/examples/quick-start/ -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <!-- Incluez le fichier CSS Leaflet dans la section d’en-tête de votre document -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+        <!-- Inclure le fichier JavaScript de Leaflet après le CSS de Leaflet -->
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+        <style type="text/css">
+            #map { 
+                    height: 400px; 
+                    width: 600px;
+                }
+        </style>
+	    <title>Carte</title>
+    </head>
+    <body>
+	<div id="map">
+	    <!-- Ici s'affichera la carte -->
+	</div>
+    
+    <script type="text/javascript">
+        var popup1 = L.popup();
+        // Fonction qui sera appelé lors d'un événement de type click
+        function onMapClick(e) {
+            //alert("You clicked the map at " + e.latlng);
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+        }
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        // AJout d'un marqueur
+        var marker = L.marker([51.5, -0.09]).addTo(map);
+        // Ajout d'un cercle 
+        var circle = L.circle([51.508, -0.11], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(map);
+        // Ajout d'un polygone
+        var polygon = L.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(map);
+        // Ajout d'une couche de tuiles à notre carte
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2hlaWtobWFyYSIsImEiOiJjbDBwcWlrbDAxeHViM2JxdGFyajQ1bnY1In0.3cNTRanU6xWTauztk0_lUQ', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'your.mapbox.access.token'
+        }).addTo(map);
+        // Ajout de fenetres contextuelles popup aux elements crees
+        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+        circle.bindPopup("I am a circle.");
+        polygon.bindPopup("I am a polygon.");
+        // Utiliser une fenêtre contextuelle comme calque
+        var popup = L.popup()
+            .setLatLng([51.513, -0.09])
+            .setContent("I am a standalone popup.")
+            .openOn(map);       
+
+        // Appel de fonction onMapClick lors d'un événement de type click
+        map.on('click', onMapClick); 
+    </script>
+    </body>
+</html>

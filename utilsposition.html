@@ -1,0 +1,96 @@
+<!-- Gestion des erreurs et rejets -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+  <meta charset="utf-8">
+  <!-- Nous chargeons les fichiers CDN de Leaflet. Le CSS AVANT le JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+  <style type="text/css">
+      #map{ /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
+          height:400px;
+          width: auto;
+      }
+  </style>
+  <title>HTML5 géolocalisation</title> 
+</head>
+<body>
+<p id="demo">Click sur le boutton pour voir vos coordonées:</p>
+<button onclick="getLocation()">Montrer moi</button>
+
+<br/>
+<div id="map">
+  <!-- Ici s'affichera la carte -->
+</div>
+
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+<script>
+  var x=document.getElementById("demo");
+  var mycoord = [];
+  function getLocation(){
+    if (navigator.geolocation){   
+      navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }else{
+      x.innerHTML="Geolocation n’est pas prise en charge par ce navigateur.";
+    }
+  }
+  function showPosition(position){
+    x.innerHTML="Latitude: " + position.coords.latitude +"<br>Longitude: " + position.coords.longitude;
+    mycoord[0] = position.coords.latitude;
+    mycoord[1] = position.coords.longitude
+    return mycoord;
+  }
+  function showError(error){
+    switch(error.code){
+      case error.PERMISSION_DENIED:
+        x.innerHTML="localisation non autorisé par l'utilisateur."
+        break;
+      case error.POSITION_UNAVAILABLE:
+        x.innerHTML="L'information sur la localisation et indisponible."
+        break;
+      case error.TIMEOUT:
+        x.innerHTML="le temps de réponce est dépasé."
+        break;
+      case error.UNKNOWN_ERROR:
+        x.innerHTML="Une erreur inconu a été rencontrée."
+        break;
+    }
+  }
+      console.log(mycoord);
+  //**********
+        // On initialise la latitude et la longitude de Paris (centre de la carte)
+        //var lat = mycoord.latitude; //14.7624114; // 48.852969;
+        //var lon = mycoord.longitude; //-17.4395521; //2.349903;
+        var macarte = null;
+        // Nous initialisons une liste de marqueurs
+        var villes = {
+            "livreur1": { "lat": 14.7624114, "lon": -17.4395521 },
+            "livreur2": { "lat": 14.7629, "lon": -17.438 },
+            "livreur3": { "lat": 14.7640, "lon": -17.435 },
+            "livreur4": { "lat": 14.7649, "lon": -17.436 }
+        };
+        // Fonction d'initialisation de la carte
+        function initMap(mycoord=[48.852969, 2.349903]) {
+            // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
+            macarte = L.map('map').setView([mycoord[0], mycoord[1]], 11);
+            // Nous ajoutons un marqueur
+            var marker = L.marker([mycoord[0], mycoord[1]]).addTo(macarte);
+            // Leaflet ne récupère pas les cartes (tiles) sur un serveur par défaut. Nous devons lui préciser où nous souhaitons les récupérer. Ici, openstreetmap.fr
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                // Il est toujours bien de laisser le lien vers la source des données
+                attribution: 'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
+                minZoom: 14,
+                maxZoom: 20
+            }).addTo(macarte);
+            // Nous parcourons la liste des villes
+            for (ville in villes) {
+                var marker = L.marker([villes[ville].lat, villes[ville].lon]).addTo(macarte);
+            }   
+        }
+        window.onload = function(){
+            // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
+            initMap(mycoord); 
+        };
+</script>
+</body>
+</html>
